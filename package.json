@@ -1,0 +1,18 @@
+{
+  "name": "ecommerce-app",
+  "version": "1.0.0",
+  "description": "Simple e-commerce web application for database architecture demo",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.6.5",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
