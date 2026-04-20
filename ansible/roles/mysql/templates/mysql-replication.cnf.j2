@@ -1,0 +1,16 @@
+[mysqld]
+bind-address = 0.0.0.0
+server-id = {{ mysql_server_id | default(101) }}
+log_bin = mysql-bin
+binlog_format = ROW
+gtid_mode = ON
+enforce_gtid_consistency = ON
+log_slave_updates = ON
+relay_log = relay-bin
+read_only = {{ 'OFF' if inventory_hostname in groups['db_master'] else 'ON' }}
+super_read_only = {{ 'OFF' if inventory_hostname in groups['db_master'] else 'ON' }}
+skip_name_resolve = ON
+require_secure_transport = ON
+ssl-ca = /etc/mysql/ssl/ca.pem
+ssl-cert = /etc/mysql/ssl/server-cert.pem
+ssl-key = /etc/mysql/ssl/server-key.pem

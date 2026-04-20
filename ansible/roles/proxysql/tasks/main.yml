@@ -1,0 +1,72 @@
+---
+- name: Install ProxySQL
+  ansible.builtin.apt:
+    name:
+      - proxysql
+      - mysql-client
+    state: present
+
+- name: Create ProxySQL SSL directory
+  ansible.builtin.file:
+    path: /etc/proxysql/ssl
+    state: directory
+    owner: proxysql
+    group: proxysql
+    mode: "0750"
+
+- name: Copy CA certificate to ProxySQL node
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/artifacts/certs/ca.pem"
+    dest: /etc/proxysql/ssl/ca.pem
+    owner: proxysql
+    group: proxysql
+    mode: "0644"
+
+- name: Copy ProxySQL certificate
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/artifacts/certs/{{ inventory_hostname }}-cert.pem"
+    dest: /etc/proxysql/ssl/proxy-cert.pem
+    owner: proxysql
+    group: proxysql
+    mode: "0644"
+
+- name: Copy ProxySQL private key
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/artifacts/certs/{{ inventory_hostname }}-key.pem"
+    dest: /etc/proxysql/ssl/proxy-key.pem
+    owner: proxysql
+    group: proxysql
+    mode: "0600"
+
+- name: Ensure ProxySQL service is started and enabled
+  ansible.builtin.service:
+    name: proxysql
+    state: started
+    enabled: true
+
+- name: Wait for ProxySQL admin interface to be available
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: 6032
+    timeout: 60
+
+- name: Render ProxySQL bootstrap SQL
+  ansible.builtin.template:
+    src: proxysql-bootstrap.sql.j2
+    dest: /tmp/proxysql-bootstrap.sql
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Apply ProxySQL read/write split configuration
+  ansible.builtin.shell: |
+    mysql -uadmin -padmin -h127.0.0.1 -P6032 --protocol=tcp < /tmp/proxysql-bootstrap.sql
+  args:
+    executable: /bin/bash
+  no_log: true
+
+- name: Validate ProxySQL listener port
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: 6033
+    timeout: 30

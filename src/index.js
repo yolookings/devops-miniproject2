@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2/promise');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,20 +26,46 @@ const dbConfig = {
 
 let pool;
 
+function buildSslConfig() {
+  const caPath = process.env.DB_SSL_CA_PATH;
+  if (!caPath) return null;
+
+  try {
+    return {
+      ca: fs.readFileSync(caPath, 'utf8'),
+      rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== 'false'
+    };
+  } catch (error) {
+    console.warn(`SSL CA file not found at ${caPath}. Falling back to non-SSL connection.`);
+    return null;
+  }
+}
+
 async function initDB() {
   try {
-    pool = mysql.createPool(dbConfig);
+    const sslConfig = buildSslConfig();
+    pool = mysql.createPool({
+      ...dbConfig,
+      ...(sslConfig ? { ssl: sslConfig } : {})
+    });
     const connection = await pool.getConnection();
     console.log('Database connected successfully');
     connection.release();
   } catch (error) {
+    pool = null;
     console.warn('Database not available yet:', error.message);
   }
 }
 
+async function ensurePool() {
+  if (pool) return true;
+  await initDB();
+  return !!pool;
+}
+
 app.get('/api/products', async (req, res) => {
   try {
-    if (!pool) {
+    if (!(await ensurePool())) {
       return res.status(503).json({ error: 'Database not available' });
     }
     
@@ -56,7 +83,7 @@ app.get('/api/products', async (req, res) => {
 
 app.post('/api/orders', async (req, res) => {
   try {
-    if (!pool) {
+    if (!(await ensurePool())) {
       return res.status(503).json({ error: 'Database not available' });
     }
     
@@ -84,7 +111,7 @@ app.post('/api/orders', async (req, res) => {
 
 app.get('/api/orders', async (req, res) => {
   try {
-    if (!pool) {
+    if (!(await ensurePool())) {
       return res.status(503).json({ error: 'Database not available' });
     }
     

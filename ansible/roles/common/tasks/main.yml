@@ -1,0 +1,21 @@
+---
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install common packages
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+      - unzip
+      - python3-pymysql
+      - mysql-client
+    state: present
+
+- name: Set timezone
+  ansible.builtin.command: timedatectl set-timezone {{ timezone }}
+  changed_when: false

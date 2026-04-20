@@ -8,3 +8,8 @@ terraform/*.tfstate
 terraform/*.tfstate.backup
 terraform/*.tfvars
 terraform/.terraform.lock.hcl
+
+# Ansible runtime secrets/artifacts
+ansible/inventory/hosts.ini
+ansible/group_vars/all.yml
+ansible/artifacts/

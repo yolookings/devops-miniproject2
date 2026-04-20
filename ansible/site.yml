@@ -1,0 +1,87 @@
+---
+- name: Generate TLS certificates on control node
+  hosts: localhost
+  gather_facts: false
+  vars:
+    certs_dir: "{{ playbook_dir }}/artifacts/certs"
+    cert_hosts: "{{ (groups['db'] | default([])) + (groups['proxy'] | default([])) }}"
+  tasks:
+    - name: Ensure openssl is installed on controller
+      ansible.builtin.command: command -v openssl
+      changed_when: false
+
+    - name: Create local certificate directory
+      ansible.builtin.file:
+        path: "{{ certs_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Generate CA private key
+      ansible.builtin.command: >-
+        openssl genrsa -out {{ certs_dir }}/ca-key.pem 4096
+      args:
+        creates: "{{ certs_dir }}/ca-key.pem"
+
+    - name: Generate CA certificate
+      ansible.builtin.command: >-
+        openssl req -x509 -new -nodes -key {{ certs_dir }}/ca-key.pem
+        -sha256 -days 3650 -out {{ certs_dir }}/ca.pem
+        -subj /C=ID/ST=Jakarta/L=Jakarta/O=DevOpsETS/CN=DevOpsETS-CA
+      args:
+        creates: "{{ certs_dir }}/ca.pem"
+
+    - name: Generate server private keys
+      ansible.builtin.command: >-
+        openssl genrsa -out {{ certs_dir }}/{{ item }}-key.pem 2048
+      args:
+        creates: "{{ certs_dir }}/{{ item }}-key.pem"
+      loop: "{{ cert_hosts }}"
+
+    - name: Generate server CSRs
+      ansible.builtin.command: >-
+        openssl req -new -key {{ certs_dir }}/{{ item }}-key.pem
+        -out {{ certs_dir }}/{{ item }}.csr
+        -subj /C=ID/ST=Jakarta/L=Jakarta/O=DevOpsETS/CN={{ hostvars[item].private_ip | default(item) }}
+      args:
+        creates: "{{ certs_dir }}/{{ item }}.csr"
+      loop: "{{ cert_hosts }}"
+
+    - name: Sign server certificates with CA
+      ansible.builtin.command: >-
+        openssl x509 -req -in {{ certs_dir }}/{{ item }}.csr
+        -CA {{ certs_dir }}/ca.pem -CAkey {{ certs_dir }}/ca-key.pem
+        -CAcreateserial -out {{ certs_dir }}/{{ item }}-cert.pem
+        -days 825 -sha256
+      args:
+        creates: "{{ certs_dir }}/{{ item }}-cert.pem"
+      loop: "{{ cert_hosts }}"
+
+- name: Baseline configuration on all nodes
+  hosts: all
+  become: true
+  roles:
+    - role: common
+
+- name: Configure MySQL master/slave cluster
+  hosts: db
+  become: true
+  roles:
+    - role: mysql
+
+- name: Configure ProxySQL query router
+  hosts: proxy
+  become: true
+  roles:
+    - role: proxysql
+
+- name: Configure automated database backup on master
+  hosts: db_master
+  become: true
+  roles:
+    - role: backup
+
+- name: Deploy application container on app node
+  hosts: app
+  become: true
+  roles:
+    - role: app

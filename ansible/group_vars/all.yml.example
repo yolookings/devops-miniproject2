@@ -1,0 +1,23 @@
+ansible_user: azureuser
+ansible_ssh_private_key_file: ~/.ssh/id_rsa
+ansible_python_interpreter: /usr/bin/python3
+
+timezone: Asia/Jakarta
+
+mysql_database: ecommerce
+mysql_app_user: appuser
+mysql_app_password: "AppPass_ChangeMe_123!"
+mysql_replication_user: repl_user
+mysql_replication_password: "ReplPass_ChangeMe_123!"
+mysql_monitor_user: monitor_user
+mysql_monitor_password: "MonitorPass_ChangeMe_123!"
+
+proxy_network_prefix: 10.0.2.%
+db_network_prefix: 10.0.3.%
+
+app_port: 3000
+app_image_name: ecommerce-app:1.0.0
+
+backup_retention_days: 7
+backup_cron_minute: "0"
+backup_cron_hour: "2"

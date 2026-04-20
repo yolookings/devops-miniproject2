@@ -32,9 +32,9 @@ output "proxy_private_ip" {
 # Database VMs
 # -----------------------------------------------------------------------------
 output "db_public_ips" {
-  description = "Public IP addresses of the Database VMs (SSH only)"
+  description = "Public IP addresses of the Database VMs (only master has public IP)"
   value = {
-    for key, node in local.db_nodes : key => azurerm_public_ip.db[key].ip_address
+    master = azurerm_public_ip.db["master"].ip_address
   }
 }
 
@@ -54,7 +54,7 @@ output "ssh_commands" {
     app     = "ssh ${var.admin_username}@${azurerm_public_ip.app.ip_address}"
     proxy   = "ssh ${var.admin_username}@${azurerm_public_ip.proxy.ip_address}"
     master  = "ssh ${var.admin_username}@${azurerm_public_ip.db["master"].ip_address}"
-    slave1  = "ssh ${var.admin_username}@${azurerm_public_ip.db["slave1"].ip_address}"
-    slave2  = "ssh ${var.admin_username}@${azurerm_public_ip.db["slave2"].ip_address}"
+    slave1  = "ssh -J ${var.admin_username}@${azurerm_public_ip.db["master"].ip_address} ${var.admin_username}@${azurerm_network_interface.db["slave1"].private_ip_address}"
+    slave2  = "ssh -J ${var.admin_username}@${azurerm_public_ip.db["master"].ip_address} ${var.admin_username}@${azurerm_network_interface.db["slave2"].private_ip_address}"
   }
 }

@@ -1,0 +1,24 @@
+---
+- name: Ensure backup script directory exists
+  ansible.builtin.file:
+    path: /opt/mysql-backup
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Install backup script
+  ansible.builtin.template:
+    src: mysql-backup.sh.j2
+    dest: /opt/mysql-backup/mysql-backup.sh
+    owner: root
+    group: root
+    mode: "0750"
+
+- name: Create daily cronjob for MySQL backup
+  ansible.builtin.cron:
+    name: "MySQL ecommerce backup"
+    user: root
+    minute: "{{ backup_cron_minute }}"
+    hour: "{{ backup_cron_hour }}"
+    job: "/opt/mysql-backup/mysql-backup.sh >> /var/log/mysql-backup.log 2>&1"

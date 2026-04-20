@@ -1,0 +1,37 @@
+DELETE FROM mysql_servers;
+INSERT INTO mysql_servers(hostgroup_id, hostname, port, weight, max_connections, use_ssl) VALUES
+  (10, '{{ hostvars[groups['db_master'][0]].private_ip | default(hostvars[groups['db_master'][0]].ansible_host) }}', 3306, 1000, 200, 1);
+{% for slave in groups['db_slaves'] %}
+INSERT INTO mysql_servers(hostgroup_id, hostname, port, weight, max_connections, use_ssl) VALUES
+  (20, '{{ hostvars[slave].private_ip | default(hostvars[slave].ansible_host) }}', 3306, 1000, 200, 1);
+{% endfor %}
+
+DELETE FROM mysql_replication_hostgroups;
+INSERT INTO mysql_replication_hostgroups(writer_hostgroup, reader_hostgroup, check_type, comment)
+VALUES (10, 20, 'read_only', 'Read/Write splitting');
+
+DELETE FROM mysql_users WHERE username='{{ mysql_app_user }}';
+INSERT INTO mysql_users(username, password, default_hostgroup, transaction_persistent, active, use_ssl)
+VALUES ('{{ mysql_app_user }}', '{{ mysql_app_password }}', 10, 1, 1, 1);
+
+DELETE FROM mysql_query_rules;
+INSERT INTO mysql_query_rules(rule_id, active, match_pattern, destination_hostgroup, apply)
+VALUES (100, 1, '^SELECT .* FOR UPDATE', 10, 1);
+INSERT INTO mysql_query_rules(rule_id, active, match_pattern, destination_hostgroup, apply)
+VALUES (110, 1, '^SELECT', 20, 1);
+
+UPDATE global_variables SET variable_value='{{ mysql_monitor_user }}' WHERE variable_name='mysql-monitor_username';
+UPDATE global_variables SET variable_value='{{ mysql_monitor_password }}' WHERE variable_name='mysql-monitor_password';
+UPDATE global_variables SET variable_value='true' WHERE variable_name='mysql-have_ssl';
+UPDATE global_variables SET variable_value='/etc/proxysql/ssl/ca.pem' WHERE variable_name='mysql-ssl_p2s_ca';
+UPDATE global_variables SET variable_value='/etc/proxysql/ssl/proxy-cert.pem' WHERE variable_name='mysql-ssl_p2s_cert';
+UPDATE global_variables SET variable_value='/etc/proxysql/ssl/proxy-key.pem' WHERE variable_name='mysql-ssl_p2s_key';
+
+LOAD MYSQL SERVERS TO RUNTIME;
+SAVE MYSQL SERVERS TO DISK;
+LOAD MYSQL USERS TO RUNTIME;
+SAVE MYSQL USERS TO DISK;
+LOAD MYSQL QUERY RULES TO RUNTIME;
+SAVE MYSQL QUERY RULES TO DISK;
+LOAD MYSQL VARIABLES TO RUNTIME;
+SAVE MYSQL VARIABLES TO DISK;

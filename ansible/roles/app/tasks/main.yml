@@ -1,0 +1,97 @@
+---
+- name: Install Docker Engine on app node
+  ansible.builtin.apt:
+    name: docker.io
+    state: present
+
+- name: Ensure Docker service is running
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Create app deployment directory
+  ansible.builtin.file:
+    path: /opt/ecommerce-app
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Copy Dockerfile to app node
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../Dockerfile"
+    dest: /opt/ecommerce-app/Dockerfile
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Copy package files to app node
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../{{ item }}"
+    dest: "/opt/ecommerce-app/{{ item }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - package.json
+    - package-lock.json
+
+- name: Copy source code to app node
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../src/"
+    dest: /opt/ecommerce-app/src/
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Create cert directory for app
+  ansible.builtin.file:
+    path: /opt/ecommerce-app/certs
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Copy CA certificate for app to verify ProxySQL
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/artifacts/certs/ca.pem"
+    dest: /opt/ecommerce-app/certs/ca.pem
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Render app environment file
+  ansible.builtin.template:
+    src: app.env.j2
+    dest: /opt/ecommerce-app/.env
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Build application image on app node
+  ansible.builtin.command: docker build -t {{ app_image_name }} /opt/ecommerce-app
+
+- name: Replace running app container
+  ansible.builtin.shell: |
+    docker rm -f ecommerce-app 2>/dev/null || true
+    docker run -d \
+      --name ecommerce-app \
+      --restart unless-stopped \
+      -p {{ app_port }}:3000 \
+      --env-file /opt/ecommerce-app/.env \
+      -v /opt/ecommerce-app/certs:/certs:ro \
+      {{ app_image_name }}
+  args:
+    executable: /bin/bash
+
+- name: Wait for app health endpoint on node
+  ansible.builtin.uri:
+    url: http://127.0.0.1:3000/health
+    method: GET
+    status_code: 200
+    return_content: true
+  register: healthcheck
+  retries: 10
+  delay: 5
+  until: healthcheck.status == 200

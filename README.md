@@ -27,6 +27,11 @@ Proyek ini merancang ulang arsitektur basis data e-commerce agar memiliki **high
 devops-miniproject2/
 ├── src/
 │   └── index.js              # Express.js application
+├── ansible/
+│   ├── site.yml              # Main playbook (Tahap 3)
+│   ├── inventory/            # Inventory + generator dari Terraform output
+│   ├── group_vars/           # Variabel environment (password/user/db)
+│   └── roles/                # Roles: common, mysql, proxysql, backup, app
 ├── terraform/
 │   ├── main.tf               # Provider & Resource Group
 │   ├── variables.tf          # Input variables
@@ -171,19 +176,25 @@ Semua subnet memiliki **deny-all inbound** default. Hanya traffic berikut yang d
 ```bash
 cd terraform
 
-# 1. Login ke Azure
+# 1. Set credential environment variable
+export ARM_CLIENT_ID="appId"
+export ARM_CLIENT_SECRET="password"
+export ARM_SUBSCRIPTION_ID="subscriptionId"
+export ARM_TENANT_ID="tenant"
+
+# 2. Login ke Azure CLI
 az login
 
-# 2. Initialize Terraform
+# 3. Initialize Terraform
 terraform init
 
-# 3. Preview infrastructure
+# 4. Preview infrastructure
 terraform plan
 
-# 4. Deploy
+# 5. Deploy
 terraform apply
 
-# 5. Lihat output (IP addresses, SSH commands)
+# 6. Lihat output (IP addresses, SSH commands)
 terraform output
 ```
 
@@ -223,14 +234,65 @@ terraform destroy
 
 ```env
 PORT=3000
-DB_HOST=proxysql
-DB_PORT=3306
+DB_HOST=<proxy-private-ip>
+DB_PORT=6033
 DB_USER=appuser
-DB_PASSWORD=apppassword
+DB_PASSWORD=<app-password>
 DB_NAME=ecommerce
+DB_SSL_CA_PATH=/certs/ca.pem
+DB_SSL_REJECT_UNAUTHORIZED=true
 ```
 
-## Next Stages
+## Tahap 3: Configuration as Code (Ansible)
 
-- **Tahap 3**: Ansible → Konfigurasi MySQL replication, SSL/TLS, automated backup
-- **Tahap 4**: Monitoring & Logging
+### Scope yang sudah diotomasi
+
+- Install dependency di node relevan (`mysql-server`, `proxysql`, `docker.io`)
+- Konfigurasi MySQL **Master-Slave replication** (GTID + SSL)
+- Konfigurasi ProxySQL untuk **read/write splitting**:
+  - `SELECT` → hostgroup reader
+  - `INSERT/UPDATE/DELETE` + `SELECT ... FOR UPDATE` → writer
+- Implementasi SSL/TLS:
+  - Sertifikat CA + server cert otomatis digenerate oleh Ansible
+  - Koneksi ProxySQL → MySQL pakai SSL
+  - Koneksi App → ProxySQL pakai SSL (CA verification)
+- Pembuatan user database **least privilege**:
+  - user aplikasi (`SELECT, INSERT, UPDATE` pada schema app)
+  - user replication
+  - user monitor untuk ProxySQL
+- Backup otomatis di master (`mysqldump` + cron + retention)
+
+### Cara eksekusi Tahap 3
+
+```bash
+cd ansible
+
+# 1) (Opsional) install collection
+ansible-galaxy collection install -r requirements.yml
+
+# 2) Generate inventory dari Terraform output
+./inventory/generate_inventory.sh ../terraform ./inventory/hosts.ini
+
+# 3) Ubah credential sesuai kebutuhan
+cp group_vars/all.yml.example group_vars/all.yml
+# lalu edit password di group_vars/all.yml
+
+# 4) Test konektivitas
+ansible all -m ping
+
+# 5) Jalankan semua role Tahap 3
+ansible-playbook site.yml
+```
+
+### Verifikasi cepat setelah playbook
+
+```bash
+# Dari app node
+curl http://localhost:3000/health
+
+# Dari proxy node (cek server backend terdaftar)
+mysql -uadmin -padmin -h127.0.0.1 -P6032 --protocol=tcp -e "SELECT hostgroup_id,hostname,status,use_ssl FROM mysql_servers;"
+
+# Dari slave node (cek replikasi)
+mysql -uroot -e "SHOW REPLICA STATUS\\G" | egrep "Replica_IO_Running|Replica_SQL_Running"
+```

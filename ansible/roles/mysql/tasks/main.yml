@@ -1,0 +1,148 @@
+---
+- name: Install MySQL server
+  ansible.builtin.apt:
+    name: mysql-server
+    state: present
+
+- name: Ensure MySQL service is enabled and started
+  ansible.builtin.service:
+    name: mysql
+    state: started
+    enabled: true
+
+- name: Create MySQL SSL directory
+  ansible.builtin.file:
+    path: /etc/mysql/ssl
+    state: directory
+    owner: mysql
+    group: mysql
+    mode: "0750"
+
+- name: Copy CA certificate to DB node
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/artifacts/certs/ca.pem"
+    dest: /etc/mysql/ssl/ca.pem
+    owner: mysql
+    group: mysql
+    mode: "0644"
+  notify: Restart mysql
+
+- name: Copy server certificate to DB node
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/artifacts/certs/{{ inventory_hostname }}-cert.pem"
+    dest: /etc/mysql/ssl/server-cert.pem
+    owner: mysql
+    group: mysql
+    mode: "0644"
+  notify: Restart mysql
+
+- name: Copy server private key to DB node
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/artifacts/certs/{{ inventory_hostname }}-key.pem"
+    dest: /etc/mysql/ssl/server-key.pem
+    owner: mysql
+    group: mysql
+    mode: "0600"
+  notify: Restart mysql
+
+- name: Configure MySQL replication and SSL settings
+  ansible.builtin.template:
+    src: mysql-replication.cnf.j2
+    dest: /etc/mysql/mysql.conf.d/99-replication.cnf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart mysql
+
+- name: Apply MySQL restart handler immediately
+  ansible.builtin.meta: flush_handlers
+
+- name: Wait for MySQL to be ready
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: 3306
+    timeout: 60
+
+- name: Create schema, sample data, and least-privilege users on master
+  ansible.builtin.shell: |
+    mysql --protocol=socket -uroot <<'SQL'
+    CREATE DATABASE IF NOT EXISTS {{ mysql_database }};
+
+    USE {{ mysql_database }};
+
+    CREATE TABLE IF NOT EXISTS products (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      name VARCHAR(150) NOT NULL,
+      price DECIMAL(12,2) NOT NULL,
+      stock INT NOT NULL DEFAULT 0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS orders (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      product_id INT NOT NULL,
+      quantity INT NOT NULL,
+      customer_name VARCHAR(120) NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      CONSTRAINT fk_orders_product FOREIGN KEY (product_id) REFERENCES products(id)
+    );
+
+    INSERT INTO products (id, name, price, stock)
+    VALUES
+      (1, 'Mechanical Keyboard', 950000, 50),
+      (2, 'Gaming Mouse', 450000, 80),
+      (3, 'USB-C Hub', 350000, 120)
+    ON DUPLICATE KEY UPDATE
+      name = VALUES(name),
+      price = VALUES(price),
+      stock = VALUES(stock);
+
+    CREATE USER IF NOT EXISTS '{{ mysql_replication_user }}'@'{{ db_network_prefix }}' IDENTIFIED BY '{{ mysql_replication_password }}';
+    ALTER USER '{{ mysql_replication_user }}'@'{{ db_network_prefix }}' REQUIRE SSL;
+    GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO '{{ mysql_replication_user }}'@'{{ db_network_prefix }}';
+
+    CREATE USER IF NOT EXISTS '{{ mysql_app_user }}'@'{{ proxy_network_prefix }}' IDENTIFIED BY '{{ mysql_app_password }}';
+    ALTER USER '{{ mysql_app_user }}'@'{{ proxy_network_prefix }}' REQUIRE SSL;
+    GRANT SELECT, INSERT, UPDATE ON {{ mysql_database }}.* TO '{{ mysql_app_user }}'@'{{ proxy_network_prefix }}';
+
+    CREATE USER IF NOT EXISTS '{{ mysql_monitor_user }}'@'{{ proxy_network_prefix }}' IDENTIFIED BY '{{ mysql_monitor_password }}';
+    ALTER USER '{{ mysql_monitor_user }}'@'{{ proxy_network_prefix }}' REQUIRE SSL;
+    GRANT USAGE, REPLICATION CLIENT ON *.* TO '{{ mysql_monitor_user }}'@'{{ proxy_network_prefix }}';
+
+    FLUSH PRIVILEGES;
+    SQL
+  args:
+    executable: /bin/bash
+  when: inventory_hostname in groups['db_master']
+  no_log: true
+
+- name: Configure replication on slave nodes (GTID + SSL)
+  ansible.builtin.shell: |
+    mysql --protocol=socket -uroot <<'SQL'
+    STOP REPLICA;
+    RESET REPLICA ALL;
+    CHANGE REPLICATION SOURCE TO
+      SOURCE_HOST='{{ hostvars[groups['db_master'][0]].private_ip | default(hostvars[groups['db_master'][0]].ansible_host) }}',
+      SOURCE_PORT=3306,
+      SOURCE_USER='{{ mysql_replication_user }}',
+      SOURCE_PASSWORD='{{ mysql_replication_password }}',
+      SOURCE_AUTO_POSITION=1,
+      SOURCE_SSL=1,
+      SOURCE_SSL_CA='/etc/mysql/ssl/ca.pem';
+    START REPLICA;
+    SQL
+  args:
+    executable: /bin/bash
+  when: inventory_hostname in groups['db_slaves']
+  no_log: true
+
+- name: Verify replication IO and SQL thread status on slaves
+  ansible.builtin.shell: |
+    mysql --protocol=socket -uroot -N -B -e "SHOW REPLICA STATUS\\G" | \
+      awk '/Replica_IO_Running:|Replica_SQL_Running:/{print $2}'
+  args:
+    executable: /bin/bash
+  register: replica_status
+  changed_when: false
+  failed_when: "(replica_status.stdout_lines | select('equalto', 'Yes') | list | length) < 2"
+  when: inventory_hostname in groups['db_slaves']

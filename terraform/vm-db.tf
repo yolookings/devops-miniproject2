@@ -15,9 +15,10 @@ locals {
 
 # -----------------------------------------------------------------------------
 # Public IPs (for SSH management only)
+# Azure for Students commonly has low Public IP quota, so only master gets a public IP.
 # -----------------------------------------------------------------------------
 resource "azurerm_public_ip" "db" {
-  for_each            = local.db_nodes
+  for_each            = { for key, value in local.db_nodes : key => value if key == "master" }
   name                = "pip-${each.value.name}"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
@@ -40,7 +41,7 @@ resource "azurerm_network_interface" "db" {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.db.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.db[each.key].id
+    public_ip_address_id          = each.key == "master" ? azurerm_public_ip.db["master"].id : null
   }
 }
 
