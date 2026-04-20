@@ -53,6 +53,12 @@ variable "vm_size" {
   default     = "Standard_B1s"
 }
 
+variable "enable_app_vm" {
+  description = "Create dedicated application VM. Set false to run app service on proxy node."
+  type        = bool
+  default     = false
+}
+
 variable "admin_username" {
   description = "Admin username for all VMs"
   type        = string

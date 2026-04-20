@@ -6,6 +6,7 @@
 # Public IP
 # -----------------------------------------------------------------------------
 resource "azurerm_public_ip" "app" {
+  count               = var.enable_app_vm ? 1 : 0
   name                = "pip-app"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
@@ -18,6 +19,7 @@ resource "azurerm_public_ip" "app" {
 # Network Interface
 # -----------------------------------------------------------------------------
 resource "azurerm_network_interface" "app" {
+  count               = var.enable_app_vm ? 1 : 0
   name                = "nic-app"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
@@ -27,7 +29,7 @@ resource "azurerm_network_interface" "app" {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.app.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.app.id
+    public_ip_address_id          = azurerm_public_ip.app[0].id
   }
 }
 
@@ -35,13 +37,14 @@ resource "azurerm_network_interface" "app" {
 # Virtual Machine
 # -----------------------------------------------------------------------------
 resource "azurerm_linux_virtual_machine" "app" {
+  count                           = var.enable_app_vm ? 1 : 0
   name                            = "vm-app"
   location                        = azurerm_resource_group.main.location
   resource_group_name             = azurerm_resource_group.main.name
   size                            = var.vm_size
   admin_username                  = var.admin_username
   disable_password_authentication = true
-  network_interface_ids           = [azurerm_network_interface.app.id]
+  network_interface_ids           = [azurerm_network_interface.app[0].id]
   tags                            = var.tags
 
   admin_ssh_key {

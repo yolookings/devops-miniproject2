@@ -94,6 +94,7 @@ resource "azurerm_network_security_group" "app" {
 # - Allow SSH from anywhere (for management)
 # - Allow MySQL (6033) from App subnet only
 # - Allow Admin (6032) from App subnet only
+# - Allow HTTP/3000 from anywhere (app service merged on proxy node)
 # -----------------------------------------------------------------------------
 resource "azurerm_network_security_group" "proxy" {
   name                = "nsg-proxy"
@@ -134,6 +135,18 @@ resource "azurerm_network_security_group" "proxy" {
     source_port_range          = "*"
     destination_port_range     = "6032"
     source_address_prefix      = var.subnet_app_prefix
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "Allow-HTTP-App"
+    priority                   = 130
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "3000"
+    source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
 

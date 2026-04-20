@@ -1,5 +1,5 @@
 [app]
-vm-app ansible_host=20.20.20.20 private_ip=10.0.1.4
+vm-proxysql ansible_host=30.30.30.30 private_ip=10.0.2.4
 
 [proxy]
 vm-proxysql ansible_host=30.30.30.30 private_ip=10.0.2.4
@@ -9,7 +9,6 @@ vm-db-master ansible_host=40.40.40.40 private_ip=10.0.3.4 mysql_server_id=101
 
 [db_slaves]
 vm-db-slave1 ansible_host=10.0.3.5 private_ip=10.0.3.5 mysql_server_id=102 ansible_ssh_common_args='-o ProxyJump=azureuser@40.40.40.40'
-vm-db-slave2 ansible_host=10.0.3.6 private_ip=10.0.3.6 mysql_server_id=103 ansible_ssh_common_args='-o ProxyJump=azureuser@40.40.40.40'
 
 [db:children]
 db_master
