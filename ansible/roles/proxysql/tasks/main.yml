@@ -1,48 +1,82 @@
 ---
-- name: Install ProxySQL
+- name: Install Docker Engine for ProxySQL container
   ansible.builtin.apt:
     name:
-      - proxysql
+      - docker.io
       - mysql-client
     state: present
 
+- name: Ensure Docker service is started and enabled
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Create ProxySQL base directory
+  ansible.builtin.file:
+    path: /opt/proxysql
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
 - name: Create ProxySQL SSL directory
   ansible.builtin.file:
-    path: /etc/proxysql/ssl
+    path: /opt/proxysql/ssl
     state: directory
-    owner: proxysql
-    group: proxysql
-    mode: "0750"
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Create ProxySQL data directory
+  ansible.builtin.file:
+    path: /opt/proxysql/data
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
 
 - name: Copy CA certificate to ProxySQL node
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/artifacts/certs/ca.pem"
-    dest: /etc/proxysql/ssl/ca.pem
-    owner: proxysql
-    group: proxysql
+    dest: /opt/proxysql/ssl/ca.pem
+    owner: root
+    group: root
     mode: "0644"
 
 - name: Copy ProxySQL certificate
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/artifacts/certs/{{ inventory_hostname }}-cert.pem"
-    dest: /etc/proxysql/ssl/proxy-cert.pem
-    owner: proxysql
-    group: proxysql
+    dest: /opt/proxysql/ssl/proxy-cert.pem
+    owner: root
+    group: root
     mode: "0644"
 
 - name: Copy ProxySQL private key
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/artifacts/certs/{{ inventory_hostname }}-key.pem"
-    dest: /etc/proxysql/ssl/proxy-key.pem
-    owner: proxysql
-    group: proxysql
+    dest: /opt/proxysql/ssl/proxy-key.pem
+    owner: root
+    group: root
     mode: "0600"
 
-- name: Ensure ProxySQL service is started and enabled
-  ansible.builtin.service:
-    name: proxysql
-    state: started
-    enabled: true
+- name: Pull ProxySQL container image
+  ansible.builtin.command: docker pull proxysql/proxysql:2.6.2
+  changed_when: false
+
+- name: Restart ProxySQL container
+  ansible.builtin.shell: |
+    docker rm -f proxysql 2>/dev/null || true
+    docker run -d \
+      --name proxysql \
+      --restart unless-stopped \
+      -p 6032:6032 \
+      -p 6033:6033 \
+      -v /opt/proxysql/data:/var/lib/proxysql \
+      -v /opt/proxysql/ssl:/etc/proxysql/ssl \
+      proxysql/proxysql:2.6.2
+  args:
+    executable: /bin/bash
 
 - name: Wait for ProxySQL admin interface to be available
   ansible.builtin.wait_for:
@@ -60,10 +94,12 @@
 
 - name: Apply ProxySQL read/write split configuration
   ansible.builtin.shell: |
-    mysql -uadmin -padmin -h127.0.0.1 -P6032 --protocol=tcp < /tmp/proxysql-bootstrap.sql
+    cat /tmp/proxysql-bootstrap.sql | docker exec -i proxysql mysql -uadmin -padmin -h127.0.0.1 -P6032 --protocol=tcp
   args:
     executable: /bin/bash
-  no_log: true
+  register: proxysql_bootstrap
+  changed_when: true
+  failed_when: proxysql_bootstrap.rc != 0
 
 - name: Validate ProxySQL listener port
   ansible.builtin.wait_for:

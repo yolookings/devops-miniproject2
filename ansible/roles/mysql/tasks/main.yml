@@ -54,6 +54,14 @@
     mode: "0644"
   notify: Restart mysql
 
+- name: Ensure MySQL listens on all interfaces
+  ansible.builtin.lineinfile:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: '^bind-address\s*='
+    line: 'bind-address = 0.0.0.0'
+    backup: false
+  notify: Restart mysql
+
 - name: Apply MySQL restart handler immediately
   ansible.builtin.meta: flush_handlers
 
@@ -62,6 +70,14 @@
     host: 127.0.0.1
     port: 3306
     timeout: 60
+
+- name: Wait until master MySQL port is reachable from slave
+  ansible.builtin.wait_for:
+    host: "{{ hostvars[groups['db_master'][0]].private_ip | default(hostvars[groups['db_master'][0]].ansible_host) }}"
+    port: 3306
+    timeout: 120
+    delay: 5
+  when: inventory_hostname in groups['db_slaves']
 
 - name: Create schema, sample data, and least-privilege users on master
   ansible.builtin.shell: |
@@ -118,6 +134,7 @@
 
 - name: Configure replication on slave nodes (GTID + SSL)
   ansible.builtin.shell: |
+    set -euo pipefail
     mysql --protocol=socket -uroot <<'SQL'
     STOP REPLICA;
     RESET REPLICA ALL;
@@ -126,6 +143,7 @@
       SOURCE_PORT=3306,
       SOURCE_USER='{{ mysql_replication_user }}',
       SOURCE_PASSWORD='{{ mysql_replication_password }}',
+      SOURCE_CONNECT_RETRY=5,
       SOURCE_AUTO_POSITION=1,
       SOURCE_SSL=1,
       SOURCE_SSL_CA='/etc/mysql/ssl/ca.pem';
@@ -138,11 +156,36 @@
 
 - name: Verify replication IO and SQL thread status on slaves
   ansible.builtin.shell: |
-    mysql --protocol=socket -uroot -N -B -e "SHOW REPLICA STATUS\\G" | \
-      awk '/Replica_IO_Running:|Replica_SQL_Running:/{print $2}'
+    set -euo pipefail
+
+    STATUS="$(mysql --protocol=socket -uroot -e "SHOW REPLICA STATUS\\G" 2>/dev/null || true)"
+
+    if [ -z "${STATUS}" ]; then
+      STATUS="$(mysql --protocol=socket -uroot -e "SHOW SLAVE STATUS\\G" 2>/dev/null || true)"
+    fi
+
+    IO_STATUS="$(echo "${STATUS}" | awk -F': ' '/Replica_IO_Running:|Slave_IO_Running:/{print $2; exit}')"
+    SQL_STATUS="$(echo "${STATUS}" | awk -F': ' '/Replica_SQL_Running:|Slave_SQL_Running:/{print $2; exit}')"
+
+    if [ -z "${IO_STATUS}" ] || [ -z "${SQL_STATUS}" ]; then
+      echo "Replication status not found on slave."
+      echo "${STATUS}"
+      exit 2
+    fi
+
+    if [ "${IO_STATUS}" != "Yes" ] || [ "${SQL_STATUS}" != "Yes" ]; then
+      echo "Replication is not healthy. IO=${IO_STATUS}, SQL=${SQL_STATUS}"
+      echo "${STATUS}"
+      exit 3
+    fi
+
+    echo "Replication healthy. IO=${IO_STATUS}, SQL=${SQL_STATUS}"
   args:
     executable: /bin/bash
   register: replica_status
   changed_when: false
-  failed_when: "(replica_status.stdout_lines | select('equalto', 'Yes') | list | length) < 2"
+  failed_when: replica_status.rc != 0
   when: inventory_hostname in groups['db_slaves']
+  retries: 12
+  delay: 10
+  until: replica_status.rc == 0

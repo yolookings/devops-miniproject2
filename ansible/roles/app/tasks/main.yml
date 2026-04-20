@@ -79,6 +79,7 @@
       --name ecommerce-app \
       --restart unless-stopped \
       -p {{ app_port }}:3000 \
+      --add-host=host.docker.internal:host-gateway \
       --env-file /opt/ecommerce-app/.env \
       -v /opt/ecommerce-app/certs:/certs:ro \
       {{ app_image_name }}
