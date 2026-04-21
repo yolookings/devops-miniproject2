@@ -60,6 +60,30 @@
     group: root
     mode: "0600"
 
+- name: Copy frontend CA bundle for ProxySQL listener
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/artifacts/certs/ca.pem"
+    dest: /opt/proxysql/data/proxysql-ca.pem
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Copy frontend certificate for ProxySQL listener
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/artifacts/certs/{{ inventory_hostname }}-cert.pem"
+    dest: /opt/proxysql/data/proxysql-cert.pem
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Copy frontend private key for ProxySQL listener
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/artifacts/certs/{{ inventory_hostname }}-key.pem"
+    dest: /opt/proxysql/data/proxysql-key.pem
+    owner: root
+    group: root
+    mode: "0600"
+
 - name: Pull ProxySQL container image
   ansible.builtin.command: docker pull proxysql/proxysql:2.6.2
   changed_when: false

@@ -1,0 +1,235 @@
+=== ecommerce-app:1.0.0 ===
+    ✗ HIGH CVE-2026-33671 [Inefficient Regular Expression Complexity]
+      https://scout.docker.com/v/CVE-2026-33671?s=github&n=picomatch&t=npm&vr=%3E%3D4.0.0%2C%3C4.0.4
+    ✗ MEDIUM CVE-2026-33672 [Improperly Controlled Modification of Object Prototype Attributes ('Prototype Pollution')]
+      https://scout.docker.com/v/CVE-2026-33672?s=github&n=picomatch&t=npm&vr=%3E%3D4.0.0%2C%3C4.0.4
+    ✗ MEDIUM CVE-2026-33750 [Uncontrolled Resource Consumption]
+      https://scout.docker.com/v/CVE-2026-33750?s=github&n=brace-expansion&t=npm&vr=%3E%3D2.0.0%2C%3C2.0.3
+    ✗ MEDIUM CVE-2025-60876
+      https://scout.docker.com/v/CVE-2025-60876?s=alpine&n=busybox&ns=alpine&t=apk&osn=alpine&osv=3.23&vr=%3C%3D1.37.0-r30
+  CRITICAL  0 
+  HIGH      1 
+
+=== proxysql/proxysql:2.6.2 ===
+    ✗ CRITICAL CVE-2024-5535
+      https://scout.docker.com/v/CVE-2024-5535?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.15-1%7Edeb12u1
+    ✗ HIGH CVE-2026-28390
+      https://scout.docker.com/v/CVE-2026-28390?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.19-1%7Edeb12u2
+    ✗ HIGH CVE-2026-28389
+      https://scout.docker.com/v/CVE-2026-28389?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.19-1%7Edeb12u2
+    ✗ HIGH CVE-2026-28388
+      https://scout.docker.com/v/CVE-2026-28388?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.19-1%7Edeb12u2
+    ✗ HIGH CVE-2025-9230
+      https://scout.docker.com/v/CVE-2025-9230?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.17-1%7Edeb12u3
+    ✗ HIGH CVE-2025-69421
+      https://scout.docker.com/v/CVE-2025-69421?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.18-1%7Edeb12u2
+    ✗ HIGH CVE-2025-69420
+      https://scout.docker.com/v/CVE-2025-69420?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.18-1%7Edeb12u2
+    ✗ HIGH CVE-2024-4741
+      https://scout.docker.com/v/CVE-2024-4741?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.14-1%7Edeb12u1
+    ✗ HIGH CVE-2025-69419
+      https://scout.docker.com/v/CVE-2025-69419?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.18-1%7Edeb12u2
+    ✗ MEDIUM CVE-2024-2511
+      https://scout.docker.com/v/CVE-2024-2511?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.14-1%7Edeb12u1
+    ✗ MEDIUM CVE-2026-22795
+      https://scout.docker.com/v/CVE-2026-22795?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.18-1%7Edeb12u2
+    ✗ MEDIUM CVE-2024-0727
+      https://scout.docker.com/v/CVE-2024-0727?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.13-1%7Edeb12u1
+    ✗ MEDIUM CVE-2026-22796
+      https://scout.docker.com/v/CVE-2026-22796?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.18-1%7Edeb12u2
+    ✗ MEDIUM CVE-2023-5678
+      https://scout.docker.com/v/CVE-2023-5678?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.13-1%7Edeb12u1
+    ✗ MEDIUM CVE-2025-68160
+      https://scout.docker.com/v/CVE-2025-68160?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.18-1%7Edeb12u2
+    ✗ MEDIUM CVE-2024-9143
+      https://scout.docker.com/v/CVE-2024-9143?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.15-1%7Edeb12u1
+    ✗ MEDIUM CVE-2024-13176
+      https://scout.docker.com/v/CVE-2024-13176?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.16-1%7Edeb12u1
+    ✗ MEDIUM CVE-2025-69418
+      https://scout.docker.com/v/CVE-2025-69418?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.18-1%7Edeb12u2
+    ✗ LOW CVE-2026-31790
+      https://scout.docker.com/v/CVE-2026-31790?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.19-1%7Edeb12u2
+    ✗ LOW CVE-2025-9232
+      https://scout.docker.com/v/CVE-2025-9232?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.17-1%7Edeb12u3
+    ✗ LOW CVE-2025-27587
+      https://scout.docker.com/v/CVE-2025-27587?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2025-15467
+      https://scout.docker.com/v/CVE-2025-15467?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.18-1%7Edeb12u2
+    ✗ LOW CVE-2024-6119
+      https://scout.docker.com/v/CVE-2024-6119?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.14-1%7Edeb12u2
+    ✗ LOW CVE-2024-4603
+      https://scout.docker.com/v/CVE-2024-4603?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.14-1%7Edeb12u1
+    ✗ LOW CVE-2023-6237
+      https://scout.docker.com/v/CVE-2023-6237?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.13-1%7Edeb12u1
+    ✗ LOW CVE-2023-6129
+      https://scout.docker.com/v/CVE-2023-6129?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.13-1%7Edeb12u1
+    ✗ LOW CVE-2010-0928
+      https://scout.docker.com/v/CVE-2010-0928?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3E%3D3.0.11-1%7Edeb12u2
+    ✗ UNSPECIFIED CVE-2026-31789
+      https://scout.docker.com/v/CVE-2026-31789?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.19-1%7Edeb12u2
+    ✗ UNSPECIFIED CVE-2026-28387
+      https://scout.docker.com/v/CVE-2026-28387?s=debian&n=openssl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.0.19-1%7Edeb12u2
+    ✗ CRITICAL CVE-2024-38428
+      https://scout.docker.com/v/CVE-2024-38428?s=debian&n=wget&ns=debian&t=deb&osn=debian&osv=12&vr=%3C1.21.3-1%2Bdeb12u1
+    ✗ HIGH CVE-2024-33599
+      https://scout.docker.com/v/CVE-2024-33599?s=debian&n=glibc&ns=debian&t=deb&osn=debian&osv=12&vr=%3C2.36-9%2Bdeb12u7
+    ✗ HIGH CVE-2025-4802
+      https://scout.docker.com/v/CVE-2025-4802?s=debian&n=glibc&ns=debian&t=deb&osn=debian&osv=12&vr=%3C2.36-9%2Bdeb12u11
+    ✗ HIGH CVE-2024-33602
+      https://scout.docker.com/v/CVE-2024-33602?s=debian&n=glibc&ns=debian&t=deb&osn=debian&osv=12&vr=%3C2.36-9%2Bdeb12u7
+    ✗ HIGH CVE-2024-33601
+      https://scout.docker.com/v/CVE-2024-33601?s=debian&n=glibc&ns=debian&t=deb&osn=debian&osv=12&vr=%3C2.36-9%2Bdeb12u7
+    ✗ HIGH CVE-2024-2961
+      https://scout.docker.com/v/CVE-2024-2961?s=debian&n=glibc&ns=debian&t=deb&osn=debian&osv=12&vr=%3C2.36-9%2Bdeb12u6
+    ✗ MEDIUM CVE-2025-0395
+      https://scout.docker.com/v/CVE-2025-0395?s=debian&n=glibc&ns=debian&t=deb&osn=debian&osv=12&vr=%3C2.36-9%2Bdeb12u10
+    ✗ MEDIUM CVE-2025-8058
+      https://scout.docker.com/v/CVE-2025-8058?s=debian&n=glibc&ns=debian&t=deb&osn=debian&osv=12&vr=%3C2.36-9%2Bdeb12u13
+    ✗ MEDIUM CVE-2024-33600
+      https://scout.docker.com/v/CVE-2024-33600?s=debian&n=glibc&ns=debian&t=deb&osn=debian&osv=12&vr=%3C2.36-9%2Bdeb12u7
+    ✗ LOW CVE-2019-9192
+      https://scout.docker.com/v/CVE-2019-9192?s=debian&n=glibc&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2019-1010025
+      https://scout.docker.com/v/CVE-2019-1010025?s=debian&n=glibc&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2019-1010024
+      https://scout.docker.com/v/CVE-2019-1010024?s=debian&n=glibc&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2019-1010023
+      https://scout.docker.com/v/CVE-2019-1010023?s=debian&n=glibc&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2019-1010022
+      https://scout.docker.com/v/CVE-2019-1010022?s=debian&n=glibc&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2018-20796
+      https://scout.docker.com/v/CVE-2018-20796?s=debian&n=glibc&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2010-4756
+      https://scout.docker.com/v/CVE-2010-4756?s=debian&n=glibc&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ HIGH CVE-2023-50868
+      https://scout.docker.com/v/CVE-2023-50868?s=debian&n=systemd&ns=debian&t=deb&osn=debian&osv=12&vr=%3C252.23-1%7Edeb12u1
+    ✗ HIGH CVE-2023-50387
+      https://scout.docker.com/v/CVE-2023-50387?s=debian&n=systemd&ns=debian&t=deb&osn=debian&osv=12&vr=%3C252.23-1%7Edeb12u1
+    ✗ MEDIUM CVE-2025-4598
+      https://scout.docker.com/v/CVE-2025-4598?s=debian&n=systemd&ns=debian&t=deb&osn=debian&osv=12&vr=%3C252.38-1%7Edeb12u1
+    ✗ LOW CVE-2023-31439
+      https://scout.docker.com/v/CVE-2023-31439?s=debian&n=systemd&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2023-31438
+      https://scout.docker.com/v/CVE-2023-31438?s=debian&n=systemd&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2023-31437
+      https://scout.docker.com/v/CVE-2023-31437?s=debian&n=systemd&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2013-4392
+      https://scout.docker.com/v/CVE-2013-4392?s=debian&n=systemd&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ HIGH CVE-2023-31484
+      https://scout.docker.com/v/CVE-2023-31484?s=debian&n=perl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C5.36.0-7%2Bdeb12u3
+    ✗ MEDIUM CVE-2025-40909
+      https://scout.docker.com/v/CVE-2025-40909?s=debian&n=perl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C5.36.0-7%2Bdeb12u3
+    ✗ LOW CVE-2024-56406
+      https://scout.docker.com/v/CVE-2024-56406?s=debian&n=perl&ns=debian&t=deb&osn=debian&osv=12&vr=%3C5.36.0-7%2Bdeb12u2
+    ✗ LOW CVE-2023-31486
+      https://scout.docker.com/v/CVE-2023-31486?s=debian&n=perl&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2011-4116
+      https://scout.docker.com/v/CVE-2011-4116?s=debian&n=perl&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ HIGH CVE-2025-6965
+      https://scout.docker.com/v/CVE-2025-6965?s=debian&n=sqlite3&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.40.1-2%2Bdeb12u2
+    ✗ MEDIUM CVE-2023-7104
+      https://scout.docker.com/v/CVE-2023-7104?s=debian&n=sqlite3&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.40.1-2%2Bdeb12u1
+    ✗ LOW CVE-2025-70873
+      https://scout.docker.com/v/CVE-2025-70873?s=debian&n=sqlite3&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2025-29088
+      https://scout.docker.com/v/CVE-2025-29088?s=debian&n=sqlite3&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2021-45346
+      https://scout.docker.com/v/CVE-2021-45346?s=debian&n=sqlite3&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ HIGH CVE-2025-6020
+      https://scout.docker.com/v/CVE-2025-6020?s=debian&n=pam&ns=debian&t=deb&osn=debian&osv=12&vr=%3C1.5.2-6%2Bdeb12u2
+    ✗ MEDIUM CVE-2024-22365
+      https://scout.docker.com/v/CVE-2024-22365?s=debian&n=pam&ns=debian&t=deb&osn=debian&osv=12&vr=%3C1.5.2-6%2Bdeb12u2
+    ✗ HIGH CVE-2025-68973
+      https://scout.docker.com/v/CVE-2025-68973?s=debian&n=gnupg2&ns=debian&t=deb&osn=debian&osv=12&vr=%3C2.2.40-1.1%2Bdeb12u2
+    ✗ LOW CVE-2022-3219
+      https://scout.docker.com/v/CVE-2022-3219?s=debian&n=gnupg2&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ MEDIUM CVE-2025-6395
+      https://scout.docker.com/v/CVE-2025-6395?s=debian&n=gnutls28&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.7.9-2%2Bdeb12u5
+    ✗ MEDIUM CVE-2025-32990
+      https://scout.docker.com/v/CVE-2025-32990?s=debian&n=gnutls28&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.7.9-2%2Bdeb12u5
+    ✗ MEDIUM CVE-2025-32988
+      https://scout.docker.com/v/CVE-2025-32988?s=debian&n=gnutls28&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.7.9-2%2Bdeb12u5
+    ✗ MEDIUM CVE-2025-14831
+      https://scout.docker.com/v/CVE-2025-14831?s=debian&n=gnutls28&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.7.9-2%2Bdeb12u6
+    ✗ MEDIUM CVE-2024-28834
+      https://scout.docker.com/v/CVE-2024-28834?s=debian&n=gnutls28&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.7.9-2%2Bdeb12u3
+    ✗ MEDIUM CVE-2024-12243
+      https://scout.docker.com/v/CVE-2024-12243?s=debian&n=gnutls28&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.7.9-2%2Bdeb12u4
+    ✗ MEDIUM CVE-2024-28835
+      https://scout.docker.com/v/CVE-2024-28835?s=debian&n=gnutls28&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.7.9-2%2Bdeb12u3
+    ✗ MEDIUM CVE-2025-9820
+      https://scout.docker.com/v/CVE-2025-9820?s=debian&n=gnutls28&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.7.9-2%2Bdeb12u6
+    ✗ LOW CVE-2025-32989
+      https://scout.docker.com/v/CVE-2025-32989?s=debian&n=gnutls28&ns=debian&t=deb&osn=debian&osv=12&vr=%3C3.7.9-2%2Bdeb12u5
+    ✗ LOW CVE-2011-3389
+      https://scout.docker.com/v/CVE-2011-3389?s=debian&n=gnutls28&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ MEDIUM CVE-2025-30693
+      https://scout.docker.com/v/CVE-2025-30693?s=debian&n=mariadb&ns=debian&t=deb&osn=debian&osv=12&vr=%3C1%3A10.11.13-0%2Bdeb12u1
+    ✗ MEDIUM CVE-2025-30722
+      https://scout.docker.com/v/CVE-2025-30722?s=debian&n=mariadb&ns=debian&t=deb&osn=debian&osv=12&vr=%3C1%3A10.11.13-0%2Bdeb12u1
+    ✗ MEDIUM CVE-2025-21490
+      https://scout.docker.com/v/CVE-2025-21490?s=debian&n=mariadb&ns=debian&t=deb&osn=debian&osv=12&vr=%3C1%3A10.11.11-0%2Bdeb12u1
+    ✗ MEDIUM CVE-2024-21096
+      https://scout.docker.com/v/CVE-2024-21096?s=debian&n=mariadb&ns=debian&t=deb&osn=debian&osv=12&vr=%3C1%3A10.11.11-0%2Bdeb12u1
+    ✗ MEDIUM CVE-2023-52970
+      https://scout.docker.com/v/CVE-2023-52970?s=debian&n=mariadb&ns=debian&t=deb&osn=debian&osv=12&vr=%3C1%3A10.11.13-0%2Bdeb12u1
+    ✗ MEDIUM CVE-2023-52969
+      https://scout.docker.com/v/CVE-2023-52969?s=debian&n=mariadb&ns=debian&t=deb&osn=debian&osv=12&vr=%3C1%3A10.11.13-0%2Bdeb12u1
+    ✗ LOW CVE-2023-52971
+      https://scout.docker.com/v/CVE-2023-52971?s=debian&n=mariadb&ns=debian&t=deb&osn=debian&osv=12&vr=%3C1%3A10.11.13-0%2Bdeb12u1
+    ✗ MEDIUM CVE-2023-4641
+      https://scout.docker.com/v/CVE-2023-4641?s=debian&n=shadow&ns=debian&t=deb&osn=debian&osv=12&vr=%3C1%3A4.13%2Bdfsg1-1%2Bdeb12u1
+    ✗ LOW CVE-2023-29383
+      https://scout.docker.com/v/CVE-2023-29383?s=debian&n=shadow&ns=debian&t=deb&osn=debian&osv=12&vr=%3C1%3A4.13%2Bdfsg1-1%2Bdeb12u1
+    ✗ LOW CVE-2007-5686
+      https://scout.docker.com/v/CVE-2007-5686?s=debian&n=shadow&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ MEDIUM CVE-2025-45582
+      https://scout.docker.com/v/CVE-2025-45582?s=debian&n=tar&ns=debian&t=deb&osn=debian&osv=12&vr=%3E%3D1.34%2Bdfsg-1.2%2Bdeb12u1
+    ✗ LOW CVE-2005-2541
+      https://scout.docker.com/v/CVE-2005-2541?s=debian&n=tar&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ MEDIUM CVE-2025-1390
+      https://scout.docker.com/v/CVE-2025-1390?s=debian&n=libcap2&ns=debian&t=deb&osn=debian&osv=12&vr=%3C1%3A2.66-4%2Bdeb12u1
+    ✗ MEDIUM CVE-2024-12133
+      https://scout.docker.com/v/CVE-2024-12133?s=debian&n=libtasn1-6&ns=debian&t=deb&osn=debian&osv=12&vr=%3C4.19.0-2%2Bdeb12u1
+    ✗ LOW CVE-2026-22185
+      https://scout.docker.com/v/CVE-2026-22185?s=debian&n=openldap&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2020-15719
+      https://scout.docker.com/v/CVE-2020-15719?s=debian&n=openldap&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2017-17740
+      https://scout.docker.com/v/CVE-2017-17740?s=debian&n=openldap&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2017-14159
+      https://scout.docker.com/v/CVE-2017-14159?s=debian&n=openldap&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2015-3276
+      https://scout.docker.com/v/CVE-2015-3276?s=debian&n=openldap&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2024-28085
+      https://scout.docker.com/v/CVE-2024-28085?s=debian&n=util-linux&ns=debian&t=deb&osn=debian&osv=12&vr=%3C2.38.1-5%2Bdeb12u1
+    ✗ LOW CVE-2025-14104
+      https://scout.docker.com/v/CVE-2025-14104?s=debian&n=util-linux&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2022-0563
+      https://scout.docker.com/v/CVE-2022-0563?s=debian&n=util-linux&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2024-28085
+      https://scout.docker.com/v/CVE-2024-28085?s=debian&n=util-linux&ns=debian&t=deb&osn=debian&osv=12&vr=%3C2.38.1-5%2Bdeb12u1
+    ✗ LOW CVE-2025-14104
+      https://scout.docker.com/v/CVE-2025-14104?s=debian&n=util-linux&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2022-0563
+      https://scout.docker.com/v/CVE-2022-0563?s=debian&n=util-linux&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2025-5278
+      https://scout.docker.com/v/CVE-2025-5278?s=debian&n=coreutils&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2017-18018
+      https://scout.docker.com/v/CVE-2017-18018?s=debian&n=coreutils&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2024-2236
+      https://scout.docker.com/v/CVE-2024-2236?s=debian&n=libgcrypt20&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2018-6829
+      https://scout.docker.com/v/CVE-2018-6829?s=debian&n=libgcrypt20&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2023-4039
+      https://scout.docker.com/v/CVE-2023-4039?s=debian&n=gcc-12&ns=debian&t=deb&osn=debian&osv=12&vr=%3C12.2.0-14%2Bdeb12u1
+    ✗ LOW CVE-2022-27943
+      https://scout.docker.com/v/CVE-2022-27943?s=debian&n=gcc-12&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2025-31115
+      https://scout.docker.com/v/CVE-2025-31115?s=debian&n=xz-utils&ns=debian&t=deb&osn=debian&osv=12&vr=%3C5.4.1-1
+    ✗ LOW CVE-2011-3374
+      https://scout.docker.com/v/CVE-2011-3374?s=debian&n=apt&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+    ✗ LOW CVE-2026-5958
+      https://scout.docker.com/v/CVE-2026-5958?s=debian&n=sed&ns=debian&t=deb&osn=debian&osv=12&vr=%3E0
+  CRITICAL     2  
+  HIGH         19 

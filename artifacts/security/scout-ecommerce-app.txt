@@ -1,0 +1,64 @@
+
+
+## Overview
+
+                   │       Analyzed Image        
+───────────────────┼─────────────────────────────
+ Target            │  ecommerce-app:1.0.0        
+   digest          │  421579a719c8               
+   platform        │ linux/arm64                 
+   vulnerabilities │    0C     1H     3M     0L  
+   size            │ 68 MB                       
+   packages        │ 291                         
+
+
+## Packages and Vulnerabilities
+
+   0C     1H     1M     0L  picomatch 4.0.3
+pkg:npm/picomatch@4.0.3
+
+    ✗ HIGH CVE-2026-33671 [Inefficient Regular Expression Complexity]
+      https://scout.docker.com/v/CVE-2026-33671?s=github&n=picomatch&t=npm&vr=%3E%3D4.0.0%2C%3C4.0.4
+      Affected range : >=4.0.0                                      
+                     : <4.0.4                                       
+      Fixed version  : 4.0.4                                        
+      CVSS Score     : 7.5                                          
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H 
+    
+    ✗ MEDIUM CVE-2026-33672 [Improperly Controlled Modification of Object Prototype Attributes ('Prototype Pollution')]
+      https://scout.docker.com/v/CVE-2026-33672?s=github&n=picomatch&t=npm&vr=%3E%3D4.0.0%2C%3C4.0.4
+      Affected range : >=4.0.0                                      
+                     : <4.0.4                                       
+      Fixed version  : 4.0.4                                        
+      CVSS Score     : 5.3                                          
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N 
+    
+
+   0C     0H     1M     0L  brace-expansion 2.0.2
+pkg:npm/brace-expansion@2.0.2
+
+    ✗ MEDIUM CVE-2026-33750 [Uncontrolled Resource Consumption]
+      https://scout.docker.com/v/CVE-2026-33750?s=github&n=brace-expansion&t=npm&vr=%3E%3D2.0.0%2C%3C2.0.3
+      Affected range : >=2.0.0                                      
+                     : <2.0.3                                       
+      Fixed version  : 5.0.5                                        
+      CVSS Score     : 6.5                                          
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H 
+    
+
+   0C     0H     1M     0L  busybox 1.37.0-r30
+pkg:apk/alpine/busybox@1.37.0-r30?os_name=alpine&os_version=3.23
+
+    ✗ MEDIUM CVE-2025-60876
+      https://scout.docker.com/v/CVE-2025-60876?s=alpine&n=busybox&ns=alpine&t=apk&osn=alpine&osv=3.23&vr=%3C%3D1.37.0-r30
+      Affected range : <=1.37.0-r30 
+      Fixed version  : not fixed    
+    
+
+
+4 vulnerabilities found in 3 packages
+  CRITICAL  0 
+  HIGH      1 
+  MEDIUM    3 
+  LOW       0 
+

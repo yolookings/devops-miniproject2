@@ -46,12 +46,24 @@
         creates: "{{ certs_dir }}/{{ item }}.csr"
       loop: "{{ cert_hosts }}"
 
+    - name: Generate SAN extension files
+      ansible.builtin.copy:
+        dest: "{{ certs_dir }}/{{ item }}.ext"
+        mode: "0644"
+        content: |
+          subjectAltName={{ san_entries }}
+      vars:
+        host_ip: "{{ hostvars[item].private_ip | default('') }}"
+        san_entries: >-
+          DNS:{{ item }}{% if host_ip %},IP:{{ host_ip }}{% endif %}{% if item in (groups['proxy'] | default([])) %},DNS:host.docker.internal{% endif %}
+      loop: "{{ cert_hosts }}"
+
     - name: Sign server certificates with CA
       ansible.builtin.command: >-
         openssl x509 -req -in {{ certs_dir }}/{{ item }}.csr
         -CA {{ certs_dir }}/ca.pem -CAkey {{ certs_dir }}/ca-key.pem
         -CAcreateserial -out {{ certs_dir }}/{{ item }}-cert.pem
-        -days 825 -sha256
+        -days 825 -sha256 -extfile {{ certs_dir }}/{{ item }}.ext
       args:
         creates: "{{ certs_dir }}/{{ item }}-cert.pem"
       loop: "{{ cert_hosts }}"
