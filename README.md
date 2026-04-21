@@ -117,6 +117,12 @@ ansible all -m ping
 ansible-playbook site.yml --limit localhost,db,proxy,app
 ```
 
+Jika repo baru di-clone dan `terraform output` kosong (state tidak ada di device tersebut), gunakan generator inventory berbasis Azure:
+
+```bash
+./inventory/generate_inventory_from_azure.sh <resource-group-name> ./inventory/hosts.ini
+```
+
 ### Yang dikonfigurasi otomatis
 
 - common baseline package

@@ -53,9 +53,10 @@
         content: |
           subjectAltName={{ san_entries }}
       vars:
-        host_ip: "{{ hostvars[item].private_ip | default('') }}"
+        host_ip: "{{ hostvars[item].private_ip | default('', true) | string }}"
+        host_ip_valid: "{{ host_ip is match('^([0-9]{1,3}\\.){3}[0-9]{1,3}$') }}"
         san_entries: >-
-          DNS:{{ item }}{% if host_ip %},IP:{{ host_ip }}{% endif %}{% if item in (groups['proxy'] | default([])) %},DNS:host.docker.internal{% endif %}
+          DNS:{{ item }}{% if host_ip_valid %},IP:{{ host_ip }}{% endif %}{% if item in (groups['proxy'] | default([])) %},DNS:host.docker.internal{% endif %}
       loop: "{{ cert_hosts }}"
 
     - name: Sign server certificates with CA
