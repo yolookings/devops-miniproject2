@@ -1,5 +1,36 @@
 # DevOps Mini Project 2 — E-Commerce DB HA (Terraform + Ansible)
 
+Proyek ini merancang ulang arsitektur basis data e-commerce agar memiliki **high availability**, **read/write splitting** via ProxySQL, serta memenuhi standar keamanan melalui **enkripsi**, **firewalling**, dan **otomatisasi backup**.
+
+**Kelompok: 8**   
+**Anggota Kelompok:** 
+| No | Nama | NRP |
+| :--- | :---- | :--- |
+| 1 | Maulana Ahmad Zahiri | 5027231010 |
+| 2 | Furqon Aryadana | 5027231024 |
+| 3 | Dionisius Marcell Putra | 5027231044 |
+| 4 | Muhammad Hildan Adiwena | 5027231077 |
+| 5 | Abid Ubaidillah A. | 5027231089 |
+| 6 | Salomo | 5027221063 |
+
+---
+## Daftar Isi
+1. [Studi Kasus](#studi-kasus)
+2. [Arsitektur Sistem](#arsitektur-sistem)
+3. [Project Structure](#project-structure)
+4. [Tahap 1: Kontainerisasi (Docker)](#tahap-1-kontainerisasi-docker)
+5. [Tahap 2: Infrastructure as Code (Terraform)](#tahap-2-infrastructure-as-code-terraform)
+6. [Tahap 3: Configuration as Code (Ansible)](#tahap-3-configuration-as-code-ansible)
+7. [Cara eksekusi Tahap 3)](#cara-eksekusi-tahap-3)
+8. [Verifikasi cepat setelah playbook](#verifikasi-cepat-setelah-playbook)
+
+---
+   
+## Studi Kasus
+**Latar Belakang:** Sebuah perusahaan e-commerce menghadapi masalah kinerja dan skalabilitas pada basis data transaksionalnya yang saat ini berjalan pada satu instance. Selain itu, kurangnya enkripsi data in transit dan tidak adanya prosedur backup otomatis telah meningkatkan risiko keamanan data dan potensi downtime yang berkepanjangan. Anda, sebagai Lead DevOps Engineer, ditugaskan untuk merancang ulang arsitektur basis data agar memiliki high availability, mampu melakukan read/write splitting secara efisien, serta memenuhi standar keamanan industri melalui enkripsi, firewalling, dan otomatisasi pemulihan data.
+
+**Tujuan:** Mahasiswa diharapkan memiliki kompetensi dalam merancang dan mengimplementasikan arsitektur basis data relasional secara highly available, mengamankan komunikasi data menggunakan SSL, mengotomatisasi manajemen akses dan backup, serta mengintegrasikan pemindaian keamanan kontainer dalam alur deployment.
+
 Proyek ini mengimplementasikan arsitektur database e-commerce dengan:
 - MySQL replication (master-slave)
 - ProxySQL read/write split
