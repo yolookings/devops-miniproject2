@@ -257,6 +257,70 @@ MASTER_IP=$(terraform output -json db_public_ips | jq -r .master)
 ssh azureuser@"$MASTER_IP" "sudo /opt/mysql-backup/mysql-backup.sh && ls -lh /var/backups/mysql && sudo crontab -l | grep mysql-backup"
 ```
 
+## Verifikasi Database & High Avaibility
+### 1. Verifikasi Konektivitas & Replikasi (Data Integrity)
+Membuktikan bahwa Master dan Slave tersinkronisasi sempurna secara real-time.
+#### A. Buat Data di Master
+
+```
+ansible db_master -i ./inventory/hosts.ini -m shell -a "mysql -uroot -p'secretpassword' -e 'CREATE DATABASE db_verifikasi_ubaid; SHOW DATABASES;'" --become
+```
+
+#### B. Cek Data di Slave
+
+```
+ansible db_slave1 -i ./inventory/hosts.ini -m shell -a "mysql -uroot -p'secretpassword' -e 'SHOW DATABASES;'" --become
+```
+
+#### C. Audit Kesehatan Replikasi
+
+```
+ansible db_slave1 -i ./inventory/hosts.ini -m shell -a "mysql -uroot -p'secretpassword' -e 'SHOW SLAVE STATUS\G;'" --become
+```
+
+### 2. Verifikasi ProxySQL (Load Balancing)
+Membuktikan bahwa ProxySQL mengenali kedua node database dan siap membagi beban kerja.
+#### A. Cek Status Node di ProxySQL
+
+```
+RG="rg-ecommerce-ubaid-jakarta"
+PROXY_IP=$(az network public-ip show -g "$RG" -n pip-proxy --query ipAddress -o tsv | tr -d '\r\n[:space:]')
+
+ssh -t azureuser@"$PROXY_IP" "sudo docker exec -i proxysql mysql -uadmin -padmin -h127.0.0.1 -P6032 --protocol=tcp -e 'SELECT hostgroup_id, hostname, status, use_ssl FROM runtime_mysql_servers;'"
+```
+
+#### B. Cek Aturan Routing (Read/Write Split)
+
+```
+ssh -t azureuser@"$PROXY_IP" "sudo docker exec -i proxysql mysql -uadmin -padmin -h127.0.0.1 -P6032 --protocol=tcp -e 'SELECT rule_id, destination_hostgroup, match_pattern FROM runtime_mysql_query_rules;'"
+```
+
+### 3. Pembuktian Read/Write Splitting (Traffic Analysis)
+Menunjukkan sistem bekerja secara dinamis.
+#### A. Simulasi Trafik
+
+```
+curl "http://$PROXY_IP:3000/api/products"
+```
+
+#### B. Lihat Statistik Distribusi Query
+
+```
+ssh -t azureuser@"$PROXY_IP" "sudo docker exec -i proxysql mysql -uadmin -padmin -h127.0.0.1 -P6032 --protocol=tcp -e 'SELECT hostgroup, srv_host, Queries FROM stats.stats_mysql_connection_pool WHERE hostgroup IN (10,20);'"
+```
+
+## Audit SSL Database:
+Menunjukkan bahwa koneksi antar database sudah aman.
+```
+ansible db -i ./inventory/hosts.ini -m shell -a "mysql -uroot -p'secretpassword' -e 'SHOW SESSION STATUS LIKE \"Ssl_cipher\";'" --become
+```
+
+## Mengulang kembali agar terminalnya bersih:
+
+```
+ansible db_master -i ./inventory/hosts.ini -m shell -a "mysql -uroot -p'secretpassword' -e 'DROP DATABASE db_verifikasi_ubaid;'" --become
+```
+
 ## Panduan Video Demo (Maks. 15 Menit)
 
 ### Target isi video sesuai kebutuhan penilaian
