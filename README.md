@@ -317,13 +317,6 @@ ssh azureuser@"$MASTER_IP" "sudo /opt/mysql-backup/mysql-backup.sh && ls -lh /va
    - Ringkas hasil: HA, TLS, split traffic, backup, security scan.
    - Sampaikan keterbatasan Azure Student dan alasan arsitektur 3 VM.
 
-### Tips recording cepat
-
-1. Siapkan 2 terminal: satu untuk command, satu untuk output.
-2. Simpan `RG` dalam variable agar command lebih cepat.
-3. Tutup informasi sensitif sebelum rekam (key/password/token).
-4. Jika waktu mepet, tampilkan output sukses terakhir lalu jelaskan konteksnya.
-
 ## Cleanup
 
 ```bash
