@@ -14,17 +14,6 @@ Proyek ini merancang ulang arsitektur basis data e-commerce agar memiliki **high
 | 6 | Salomo | 5027221063 |
 
 ---
-## Daftar Isi
-1. [Studi Kasus](#studi-kasus)
-2. [Arsitektur Sistem](#arsitektur-sistem)
-3. [Project Structure](#project-structure)
-4. [Tahap 1: Kontainerisasi (Docker)](#tahap-1-kontainerisasi-docker)
-5. [Tahap 2: Infrastructure as Code (Terraform)](#tahap-2-infrastructure-as-code-terraform)
-6. [Tahap 3: Configuration as Code (Ansible)](#tahap-3-configuration-as-code-ansible)
-7. [Cara eksekusi Tahap 3)](#cara-eksekusi-tahap-3)
-8. [Verifikasi cepat setelah playbook](#verifikasi-cepat-setelah-playbook)
-
----
    
 ## Studi Kasus
 **Latar Belakang:** Sebuah perusahaan e-commerce menghadapi masalah kinerja dan skalabilitas pada basis data transaksionalnya yang saat ini berjalan pada satu instance. Selain itu, kurangnya enkripsi data in transit dan tidak adanya prosedur backup otomatis telah meningkatkan risiko keamanan data dan potensi downtime yang berkepanjangan. Anda, sebagai Lead DevOps Engineer, ditugaskan untuk merancang ulang arsitektur basis data agar memiliki high availability, mampu melakukan read/write splitting secara efisien, serta memenuhi standar keamanan industri melalui enkripsi, firewalling, dan otomatisasi pemulihan data.
