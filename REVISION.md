@@ -35,7 +35,7 @@ For your demo, note these credentials:
 ```bash
 # On your local machine (has Azure CLI)
 az vm list -g "$RG" -d -o table
-az network nsg list --resource-group rg-ecommerce-devops -o table
+az network nsg list --resource-group rg-ecommerce-furqon-0421113246 -o table
 ```
 
 Expected output shows:
