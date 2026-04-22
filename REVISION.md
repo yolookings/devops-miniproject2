@@ -13,11 +13,11 @@ List Yang Perlu Di Revisi :
 
 ## 📌 INFO VM
 
-| VM        | Public IP     | SSH Command                                         |
-| :-------- | :------------ | :-------------------------------------------------- |
-| Proxy/App | 20.205.34.115 | `ssh azureuser@20.205.34.115`                       |
-| Master DB | 20.24.87.253  | `ssh azureuser@20.24.87.253`                        |
-| Slave DB  | (via Proxy)   | `ssh -J azureuser@20.205.34.115 azureuser@10.0.3.5` |
+| VM        | Public IP      | SSH Command                                          |
+| :-------- | :------------- | :--------------------------------------------------- |
+| Proxy/App | 13.70.31.205   | `ssh azureuser@13.70.31.205`                         |
+| Master DB | 104.208.76.221 | `ssh azureuser@104.208.76.221`                       |
+| Slave DB  | (via Proxy)    | `ssh -J azureuser@104.208.76.221 azureuser@10.0.3.5` |
 
 ---
 
@@ -57,7 +57,7 @@ security_rule {
 **Test 1 — Akses DB langsung dari internet (HARUS GAGAL):**
 
 ```bash
-mysql -h 20.24.87.253 -u appuser -pAppPass_ChangeMe_123! -P 3306
+mysql -h 104.208.76.221 -u appuser -pAppPass_ChangeMe_123! -P 3306
 ```
 
 > ✅ **Hasil yang benar:** `ERROR 2003 (HY000): Can't connect to MySQL server` — NSG memblokir port 3306 dari luar.
@@ -65,7 +65,7 @@ mysql -h 20.24.87.253 -u appuser -pAppPass_ChangeMe_123! -P 3306
 **Test 2 — Akses lewat ProxySQL (HARUS BERHASIL):**
 
 ```bash
-mysql -h 20.205.34.115 -u appuser -pAppPass_ChangeMe_123! -P 6033
+mysql -h 13.70.31.205 -u appuser -pAppPass_ChangeMe_123! -P 6033
 ```
 
 > ✅ **Hasil yang benar:** Login berhasil — ProxySQL sebagai satu-satunya pintu masuk.
@@ -146,7 +146,7 @@ find "${BACKUP_DIR}" -type f -name '*.sql.gz' -mtime +7 -delete
 
 ```bash
 # SSH ke Master DB
-ssh azureuser@20.24.87.253
+ssh azureuser@104.208.76.221
 
 # Jalankan backup manual
 sudo /opt/mysql-backup/mysql-backup.sh
@@ -174,7 +174,7 @@ Cron job dibuat otomatis oleh Ansible (lihat source `backup/tasks/main.yml` di a
 
 ```bash
 # SSH ke Master DB
-ssh azureuser@20.24.87.253
+ssh azureuser@104.208.76.221
 
 # Lihat jadwal cron
 sudo crontab -l
@@ -228,7 +228,7 @@ VALUES (100, '^SELECT .* FOR UPDATE', 10);
 
 ```sh
 # ssh ke master
-ssh azureuser@20.24.87.253
+ssh azureuser@104.208.76.221
 
 # write
 mysql -h 127.0.0.1 -u appuser -pAppPass_ChangeMe_123! -P 6033 -e "INSERT INTO ecommerce.products (name, price, stock) VALUES ('ProdukDemo', 50000, 10);"
@@ -241,7 +241,7 @@ mysql -h 127.0.0.1 -u appuser -pAppPass_ChangeMe_123! -P 6033 -e "SELECT * FROM 
 
 ```sh
 # Masuk ke Slave Lewat Proxy
-ssh -J azureuser@20.205.34.115 azureuser@10.0.3.55
+ssh -J azureuser@104.208.76.221 azureuser@10.0.3.5
 
 # masukan command write
 sudo mysql -e "INSERT INTO ecommerce.products (name, price, stock) VALUES ('Test', 1, 1);"
@@ -270,7 +270,7 @@ START REPLICA;
 
 ```bash
 # Cek status replikasi dari Slave
-ssh -J azureuser@20.205.34.115 azureuser@10.0.3.5
+ssh -J azureuser@104.208.76.221 azureuser@10.0.3.5
 sudo mysql -e "SHOW REPLICA STATUS\G" | grep -E "Running|Seconds_Behind"
 ```
 
