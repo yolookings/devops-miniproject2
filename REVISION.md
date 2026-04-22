@@ -1,6 +1,13 @@
 # 📋 Revision Demo Guide — Mini Project 2
 
-> DevOps: MySQL Master-Slave + ProxySQL + Terraform + Ansible (Azure)
+List Yang Perlu Di Revisi :
+
+- Menunjukkan security (user, privilege, firewall, port DB)
+- Menunjukkan backup SQL (manual & otomatis)
+- Menunjukkan perbedaan hak akses master dan slave
+- Menunjukkan status replikasi master-slave
+- Menunjukkan konfigurasi cron job backup database
+- Menunjukkan hasil backup otomatis dari cron
 
 ---
 
@@ -146,6 +153,9 @@ sudo /opt/mysql-backup/mysql-backup.sh
 
 # Cek hasil backup
 ls -lh /var/backups/mysql/
+
+# lihat file
+zcat /var/backups/mysql/(nama file) | head -n 20
 ```
 
 > ✅ **Hasil yang benar:** Muncul file seperti `ecommerce_2025-04-22_02-00-00.sql.gz`
@@ -212,40 +222,33 @@ INSERT INTO mysql_query_rules(rule_id, match_pattern, destination_hostgroup)
 VALUES (100, '^SELECT .* FOR UPDATE', 10);
 ```
 
-### Demo Uji Coba
+## Demo Uji Coba
 
-**Di Master (bisa TULIS):**
+- Test Write
 
-```bash
+```sh
+# ssh ke master
 ssh azureuser@20.24.87.253
-sudo mysql -e "INSERT INTO ecommerce.products (name, price, stock) VALUES ('ProdukDemo', 50000, 10);"
+
+# write
+mysql -h 127.0.0.1 -u appuser -pAppPass_ChangeMe_123! -P 6033 -e "INSERT INTO ecommerce.products (name, price, stock) VALUES ('ProdukDemo', 50000, 10);"
+
+# read
+mysql -h 127.0.0.1 -u appuser -pAppPass_ChangeMe_123! -P 6033 -e "SELECT * FROM ecommerce.products WHERE name='ProdukDemo';"
 ```
 
-> ✅ **Hasil:** `Query OK, 1 row affected` — Master bisa INSERT
+- Test Read
 
-**Di Slave (hanya bisa BACA):**
+```sh
+# Masuk ke Slave Lewat Proxy
+ssh -J azureuser@20.205.34.115 azureuser@10.0.3.55
 
-```bash
-ssh -J azureuser@20.205.34.115 azureuser@10.0.3.5
+# masukan command write
 sudo mysql -e "INSERT INTO ecommerce.products (name, price, stock) VALUES ('Test', 1, 1);"
+
+# Test Read
+sudo mysql -e "SELECT * FROM ecommerce.products;"
 ```
-
-> ✅ **Hasil:** `ERROR 1290 (HY000): The MySQL server is running with the --read-only option`
-
-**Cek via ProxySQL (routing otomatis):**
-
-```bash
-# SELECT → otomatis ke Slave
-mysql -h 20.205.34.115 -u appuser -pAppPass_ChangeMe_123! -P 6033 \
-  -e "SELECT * FROM ecommerce.products LIMIT 3;"
-
-# Cek server routing di ProxySQL
-ssh azureuser@20.205.34.115
-mysql -uadmin -padmin -h127.0.0.1 -P6032 \
-  -e "SELECT hostgroup_id, hostname, status FROM mysql_servers;"
-```
-
----
 
 ## 6. 🔁 REPLIKASI MySQL (Master-Slave)
 
